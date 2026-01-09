@@ -1,9 +1,8 @@
-from enum import Enum
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
-from schemas import Shipment
+from schemas import Shipment, shipmentStatus
 
 
 app = FastAPI()
@@ -20,15 +19,14 @@ shipments = {
 
 
 
-@app.get("/shipment")
-def get_shipment(id: int) -> dict[str, Any]:
+@app.get("/shipment", response_model=Shipment)
+def get_shipment(id: int) -> Shipment:
     # Check for shipment with given id
     if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
         )
-
-    return shipments[id]
+    return shipments[id] 
 
 
 @app.post("/shipment")
@@ -61,14 +59,6 @@ def shipment_update(
         "status": status,
     }
     return shipments[id]
-
-class shipmentStatus(str, Enum):
-    placed = "placed"
-    shipped = "shipped"
-    delivered = "delivered"
-    in_transit = "in transit"
-    returned = "returned"
-    processing = "processing"
 
 @app.patch("/shipment")
 def patch_shipment(
