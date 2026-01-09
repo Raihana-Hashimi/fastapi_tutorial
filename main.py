@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -16,6 +17,11 @@ shipments = {
     12707: {"weight": 1.8, "content": "toys", "status": "placed"},
 }
 
+class Shipment(BaseModel):
+    content: str
+    weight: float
+    status: str
+
 
 @app.get("/shipment")
 def get_shipment(id: int) -> dict[str, Any]:
@@ -29,14 +35,8 @@ def get_shipment(id: int) -> dict[str, Any]:
 
 
 @app.post("/shipment")
-def submit_shipment(query_param: Any, req_body: dict[str, Any]) -> dict[str, int]:
-    # Get query parameters as well
-    print(f"\nQuery Param: {query_param}\n")
-    # Extract fields from request body
-    content = req_body["content"]
-    weight = req_body["weight"]
-    # Validate weight
-    if weight > 25:
+def submit_shipment(shipment: Shipment) -> dict[str, int]:
+    if shipment.weight > 25:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Maximum weight limit is 25 kgs",
@@ -45,8 +45,8 @@ def submit_shipment(query_param: Any, req_body: dict[str, Any]) -> dict[str, int
     new_id = max(shipments.keys()) + 1
     # Add to shipments dict
     shipments[new_id] = {
-        "content": content,
-        "weight": weight,
+        "content": shipment.content,
+        "weight": shipment.weight,
         "status": "placed",
     }
     # Return id for later use
@@ -79,6 +79,15 @@ def patch_shipment(
     shipment.update(body)
     shipments[id] = shipment
     return shipment
+
+@app.delete("/shipment")
+def delete_shipment( id: int):
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
+        )
+    shipments.pop(id)
+    return {"detail": f"Shipment with id #{id} has been deleted."}
 
 
 # Scalar API Documentation
