@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, status
@@ -61,10 +62,18 @@ def shipment_update(
     }
     return shipments[id]
 
+class shipmentStatus(str, Enum):
+    placed = "placed"
+    shipped = "shipped"
+    delivered = "delivered"
+    in_transit = "in transit"
+    returned = "returned"
+    processing = "processing"
+
 @app.patch("/shipment")
 def patch_shipment(
     id: int,
-    body: dict[str, Any]
+    body: dict[str, shipmentStatus]
 ):
     shipment = shipments[id]
     shipment.update(body)
