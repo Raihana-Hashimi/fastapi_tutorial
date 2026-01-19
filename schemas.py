@@ -12,7 +12,7 @@ class shipmentStatus(str, Enum):
 class BaseShipment(BaseModel):
     content: str = Field(max_length=30)
     weight: float = Field(description="Weight in kg", le=25, ge=1)
-    destination: int | None = Field(description="Destination ZIP code")
+    destination: int | None = Field(description="Destination ZIP code", default=None)
 
 class ShipmentRead(BaseShipment):
     status: shipmentStatus
