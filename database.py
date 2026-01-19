@@ -27,10 +27,14 @@ cursor.execute("""
 # """)
 # result = cursor.fetchone()
 # print(result)
+id = 12701
+status = "Out_for_delivery"
 
 cursor.execute("""
-    UPDATE shipment SET status = 'placed' WHERE id = 12701
-""")
+    UPDATE shipment SET status = :status WHERE id = :id
+""",
+    {"status": status, "id": id}
+)
 connection.commit()
 
 # cursor.execute("""
