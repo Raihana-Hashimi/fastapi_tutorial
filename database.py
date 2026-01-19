@@ -12,10 +12,18 @@ cursor.execute("""
     )
 """)
 
+# cursor.execute("""
+#     INSERT INTO shipment
+#     VALUES (12702, "basalt", 18.5, "in transit")
+# """)
+# connection.commit()
+
 cursor.execute("""
-    INSERT INTO shipment
-    VALUES (12702, "basalt", 18.5, "in transit")
+    SELECT * FROM shipment
+    WHERE id = 12702
 """)
-connection.commit()
+result = cursor.fetchone()
+print(result)
+
 
 connection.close()
