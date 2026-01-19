@@ -5,25 +5,33 @@ cursor = connection.cursor()
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS shipment (
-        id INTEGER,
+        id INTEGER PRIMARY KEY,
         content TEXT,
         weight REAL,
         status TEXT
     )
 """)
 
-# cursor.execute("""
-#     INSERT INTO shipment
-#     VALUES (12702, "basalt", 18.5, "in transit")
-# """)
+# cursor.execute("DROP TABLE shipment")
 # connection.commit()
 
 cursor.execute("""
-    SELECT * FROM shipment
-    WHERE id = 12702
+    INSERT INTO shipment
+    VALUES (12701, "basalt", 18.5, "in transit")
 """)
-result = cursor.fetchone()
-print(result)
+connection.commit()
+
+# cursor.execute("""
+#     SELECT * FROM shipment
+#     WHERE id = 12702
+# """)
+# result = cursor.fetchone()
+# print(result)
+
+# cursor.execute("""
+#     DELETE FROM shipment
+# """)
+# connection.commit()
 
 
 connection.close()
